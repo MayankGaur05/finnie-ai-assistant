@@ -1,0 +1,79 @@
+# Python bytecode and extension modules
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python packaging and build output
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+share/python-wheels/
+
+# Test, coverage, and type-checker caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+nosetests.xml
+test-results/
+.tox/
+.nox/
+.mypy_cache/
+.pytype/
+.ruff_cache/
+.hypothesis/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs and local databases
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Local application data and vector indexes
+data/local/
+data/cache/
+chroma/
+chroma_db/
+faiss_index/
+vector_store/
+langgraph.json.tmp
+.langgraph_api/
+.langchain/
+.langsmith/
+
+# Docker local state; keep Dockerfile and Compose definitions tracked
+docker-data/
+docker-volumes/
+docker-compose.override.yml
+docker-compose.override.yaml
+compose.override.yaml
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+#Docs folder
+Docs/**

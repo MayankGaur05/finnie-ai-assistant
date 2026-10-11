@@ -1,0 +1,5 @@
+# Direct application dependencies validated by the pip dry run on Python 3.13.2
+langgraph==1.2.14
+streamlit==1.65.0
+chromadb==1.5.9
+google-genai==2.29.0
