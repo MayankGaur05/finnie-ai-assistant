@@ -2,48 +2,88 @@ from pathlib import Path
 
 import chromadb
 
-db_directory = Path("src/data/vector_store")
-if not db_directory.exists():
-    print(f"Database directory '{db_directory}' not found.")
-    db_directory.mkdir(parents=True)
-knowledge_base_path = Path("knowledge_base/articles")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+print(f"Project root directory: {PROJECT_ROOT}")
 
-# create a Chroma client instance
-chroma_client = chromadb.PersistentClient(db_directory)
+ARTICLE_PATH = PROJECT_ROOT / "knowledge_base" / "articles" / "diversification.md"
 
-# create or get a collection
-collection = chroma_client.get_or_create_collection(name="finnie_finance_education")
+DB_DIRECTORY = PROJECT_ROOT / "src" / "data" / "vector_store"
 
-if not knowledge_base_path.exists():
-    print(f"Knowledge base path '{knowledge_base_path}' not found.")
-else:
-    print(f"Knowledge base path '{knowledge_base_path}' found.")
+COLLECTION_NAME = "finnie_finance_education"
 
-    with open(knowledge_base_path / "diversification.md", "r") as file:
-        content = file.read()
+def read_article(path: Path) -> tuple[str, str, dict[str, str]]:
+    """Return the article body, stable ID, and front-matter metadata."""
+    content = path.read_text(encoding="utf-8")
+    parts = content.split("---", maxsplit=2)
 
-    # Split the content into individual documents based on double newlines
-    documents = [page.strip() for page in content.split("\n\n") if page.strip()]
+    if len(parts) != 3 or parts[0].strip():
+        raise ValueError(f"Expected YAML front matter delimited by --- in {path}")
 
-    # Generate unique IDs and metadata for each document chunk
-    ids = [f"doc_{i}" for i in range(len(documents))]
-    metadata = [{"source": "diversification.md", "page": i} for i in range(len(documents))]
+    metadata: dict[str, str] = {}
+    for line in parts[1].strip().splitlines():
+        key, separator, value = line.partition(":")
+        if separator:
+            metadata[key.strip()] = value.strip().strip('"').strip("'")
 
-    # Add the documents to the collection
-    collection.add(
-        ids=ids,
-        documents=documents,
-        metadatas=metadata
+    body = parts[2].strip()
+    if not body:
+        raise ValueError(f"No article body found in {path}")
+
+    return body, path.stem, metadata
+
+
+def main() -> None:
+    body, article_id, metadata = read_article(ARTICLE_PATH)
+
+    required_fields = ("title", "publisher", "source_url", "topic", "reviewed_date")
+    missing_fields = [field for field in required_fields if not metadata.get(field)]
+    if missing_fields:
+        raise ValueError(f"Missing article metadata: {', '.join(missing_fields)}")
+
+    DB_DIRECTORY.mkdir(parents=True, exist_ok=True)
+    client = chromadb.PersistentClient(path=str(DB_DIRECTORY))
+    collection = client.get_or_create_collection(name=COLLECTION_NAME)
+
+    existing = collection.get(include=["metadatas"])
+
+    legacy_ids = [
+        record_id
+        for record_id, metadata in zip(existing["ids"], existing["metadatas"])
+        if metadata
+        and metadata.get("source") == ARTICLE_PATH.name
+        and "source_url" not in metadata
+    ]
+
+    if legacy_ids:
+        collection.delete(ids=legacy_ids)
+        print(f"Removed {len(legacy_ids)} legacy chunks.")
+
+    # Stable ID + upsert makes repeated runs safe.
+    collection.upsert(
+        ids=[article_id],
+        documents=[body],
+        metadatas=[{field: metadata[field] for field in required_fields}],
+    )
+    print(f"Indexed '{metadata['title']}' in {DB_DIRECTORY}")
+
+    question = "Does owning several funds guarantee diversification?"
+    result = collection.query(
+        query_texts=[question],
+        n_results=1,
     )
 
-    print(f"Successfully stored {len(documents)} chunks from '{knowledge_base_path / 'diversification.md'}' into Chroma DB!")
-    print(f"Database saved locally to: {db_directory}")
+    if not result["documents"] or not result["documents"][0]:
+        print("No matching article was retrieved.")
+        return
 
-    # Query the collection for relevant documents based on a question
-    result = collection.query( 
-        query_texts=["What is diversification?"],
-        n_results=3
-    )
+    print(f"\nQuestion: {question}")
+    print(f"Retrieved passage:\n{result['documents'][0][0]}")
 
-    print(f"Query result: {result}")
-    
+    source = result["metadatas"][0][0]
+    print(f"\nSource: {source['title']} — {source['publisher']}")
+    print(f"URL: {source['source_url']}")
+    print(f"Reviewed: {source['reviewed_date']}")
+
+
+if __name__ == "__main__":
+    main()
