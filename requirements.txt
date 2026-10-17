@@ -3,3 +3,4 @@ langgraph==1.2.14
 streamlit==1.65.0
 chromadb==1.5.9
 google-genai==2.29.0
+truststore==0.10.4

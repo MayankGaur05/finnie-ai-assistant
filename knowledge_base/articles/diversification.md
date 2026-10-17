@@ -15,7 +15,7 @@ Diversification means spreading investments across different assets and holdings
 
 - Investors can diversify across asset types, such as stocks, bonds, and cash.
 - They can also spread holdings within an asset type, including across companies or industry sectors.
-- Mutual funds and exchange-traded funds (ETFs) can hold many investments, but a narrowly focused fund may still leave an investor concentrated in one sector or theme.
+- Mutual funds and exchange-traded funds (ETFs) can hold many investments, but a narrowly focused fund may still leave an   investor concentrated in one sector or theme.
 - Reviewing a fund's holdings can help show whether several funds overlap substantially.
 - Asset allocation and diversification depend on a person's goals, time horizon, and tolerance for risk; this article does not prescribe a particular mix.
 
