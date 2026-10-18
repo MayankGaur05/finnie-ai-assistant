@@ -61,7 +61,7 @@ flowchart TD
     CHECK --> UI
 ```
 
-The workflow state should carry the current question, conversation history, selected agent, relevant user-provided inputs, retrieved source references, data timestamps, and any fallback or safety notices. Portfolio totals and goal projections should be calculated from explicit inputs and assumptions; the language model should explain the results rather than invent the arithmetic. The Q&A agent should include retrieved source details in its answer. The response checks should keep education-only boundaries visible and flag stale or unavailable market data.
+The workflow state should carry the current question, conversation history, selected agent, relevant user-provided inputs, retrieved source references, data timestamps, and any fallback or safety noticest Portfolio totals and goal projections should be calculated from explicit inputs and assumptions; the language model should explain the results rather than invent the arithmetic. The Q&A agent should include retrieved source details in its answer. The response checks should keep education-only boundaries visible and flag stale or unavailable market data.
 
 ## Provisional technology choices
 
