@@ -14,7 +14,9 @@ llm:
 
 retrieval:
   provider: chroma
+  client_type: PersistedClient # PersisistentClient or InMemoryClient or CloudClient
   knowledge_base_path: knowledge_base/articles
+  db_directory_path: src/data/vector_store
   collection_name: finnie_finance_education
   top_k: 5
 

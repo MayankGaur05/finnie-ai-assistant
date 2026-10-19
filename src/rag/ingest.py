@@ -2,13 +2,13 @@ import truststore
 
 truststore.inject_into_ssl()
 
-from pathlib import Path
 import re
+from pathlib import Path
 
 import chromadb
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-print(f"Project root directory: {PROJECT_ROOT}")
+
 
 ARTICLE_DIRECTORY_PATH = PROJECT_ROOT / "knowledge_base" / "articles" 
 
