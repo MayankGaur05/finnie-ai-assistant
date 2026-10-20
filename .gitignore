@@ -69,7 +69,8 @@ docker-compose.override.yaml
 compose.override.yaml
 
 # Editor and operating-system files
-.vscode/
+.vscode/*
+!.vscode/launch.json
 .idea/
 .DS_Store
 Thumbs.db

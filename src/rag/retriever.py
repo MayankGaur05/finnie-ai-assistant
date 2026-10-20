@@ -1,43 +1,137 @@
-from google import genai 
+﻿from google import genai
 from src.core import settings
 import chromadb
-import yaml
 from pathlib import Path
 from dotenv import load_dotenv
 import os
 
+# Load environment variables from .env file
 load_dotenv()
-
+# Load application settings from config.yaml
 config_file_path = Path(__file__).resolve().parents[2] / "config.yaml"
+app_settings = settings.Settings(config_file_path)
+llm_provider_settings = app_settings.llm_provider_settings # llm settings are now loaded from config.yaml
+retriever_settings = app_settings.retriever_settings # retriever settings are now loaded from config.yaml
+db_directory_path = app_settings.db_directory_path # database directory path is now loaded from config.yaml
 
-llm_provider_settings = settings.Settings(config_file_path).llm_provider_settings
-#print(f"LLM Provider Settings: {llm_provider_settings}")
-retriever_settings = settings.Settings(config_file_path).retriever_settings
-#print(f"Retriever Settings: {retriever_settings}")
-db_directory_path = settings.Settings(config_file_path).db_directory_path
-#print(f"Database Directory Path: {db_directory_path}")
-
+# Initialize the Chroma client and retrieve the collection
 chroma_client = chromadb.PersistentClient(path=str(db_directory_path))
-collection = chroma_client.get_collection(name= retriever_settings.collection_name)
+collection = chroma_client.get_collection(name=retriever_settings.collection_name)
 
+# Matches the 1.00 retrieval cutoff already used in ingest.py and the evaluation runs.
+DISTANCE_THRESHOLD = 1.00
 
-user_query = "What is an emergency funds? Why we need it?"
+# Define a list of user queries to test the retrieval and response generation
+user_queries = [
+    "Can a portfolio of several sector ETFs still be concentrated?",
+    "Could several sector ETFs still leave me concentrated?",
+    "What are the mutual funds and how to buy them?",
+    "What are the risks of investing in sector ETFs?",
+    "How can savings help reduce financial risk?",
+    "How can I diversify my investments?",
+    "What are the tax implications of investing in sector ETFs?",
+    "How we can buy and sell ETFs? What are the steps to buy ETFs?",
+    "Who is Mayank Gaur?",
+    "What is the main use of Python Programming language?",
+]
 
-context = collection.query(
-    query_texts= [user_query],
-    n_results=1
-)['documents'][0]
-
+# Set up the Gemini API client using the API key from environment variables
 api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise RuntimeError("GEMINI_API_KEY is missing. Set it in the environment or project .env file.")
 
 llm_client = genai.Client(api_key=api_key)
 
-prompt = f"{user_query}. Use this as context for answering: {context}"
+# Process each user query, retrieve relevant sources, and generate answers using the LLM
+for idx, user_query in enumerate(user_queries, start=1):
+    result = collection.query(
+        query_texts=[user_query],
+        n_results=3,
+        include=["documents", "metadatas", "distances"],
+    )
 
-interaction = llm_client.interactions.create(
-    model= llm_provider_settings.model,
-    input=prompt
+    # Extract the retrieved documents, metadata, and distances from the query result
+    documents = result["documents"][0]
+    metadatas = result["metadatas"][0]
+    distances = result["distances"][0]
+    
+    # Find the nearest candidate regardless of the distance threshold for reporting purposes
+    nearest_candidate = min(
+        zip(documents, metadatas, distances),
+        key=lambda hit: hit[2],
+        default=None,
+    )
 
-)
+    # Keep only matches within the evaluated cutoff and combine chunks from
+    # the same article so each article appears as a single cited source.
+    sources_by_url = {}
+    for document, metadata, distance in zip(documents, metadatas, distances):
+        if distance > DISTANCE_THRESHOLD:
+            continue
 
-print(f"Response from LLM: {interaction.output_text}")
+        title = metadata.get("title", "Untitled source")
+        url = metadata.get("source_url", "")
+        source_key = url or metadata.get("article_id", title)
+
+        if source_key not in sources_by_url:
+            sources_by_url[source_key] = {
+                "title": title,
+                "url": url,
+                "texts": [],
+                "distance": distance,
+            }
+
+        source = sources_by_url[source_key]
+        if document not in source["texts"]:
+            source["texts"].append(document)
+        source["distance"] = min(source["distance"], distance)
+
+    sources = list(sources_by_url.values())
+
+    print(f"Query {idx}: {user_query}")
+    if not sources:
+        print(f"Answer: I couldn't find sufficiently relevant information in the knowledge base to answer that.")
+        print(f"No sources passed the distance cutoff ({DISTANCE_THRESHOLD:.2f}).")
+        if nearest_candidate is not None:
+            _, nearest_metadata, nearest_distance = nearest_candidate
+            nearest_title = nearest_metadata.get("title", "Untitled source")
+            print(
+                f"Nearest rejected candidate: {nearest_title} "
+                f"(distance: {nearest_distance:.4f})"
+            )
+        else:
+            print("Chroma returned no candidates.")
+        continue
+
+    context_parts = []
+    for source_index, source in enumerate(sources, start=1):
+        source_text = "\n\n".join(source["texts"])
+        context_parts.append(
+            f"[Source {source_index} - {source['title']}]\n{source_text}"
+        )
+    context = "\n\n".join(context_parts)
+
+    prompt = f"""
+Answer the question using only the supplied sources.
+If they do not contain enough information, say so.
+Cite supporting sources using their labels, such as [Source 1].
+Do not invent source labels or URLs.
+
+Question: {user_query}
+
+Sources:
+{context}
+"""
+
+    interaction = llm_client.interactions.create(
+        model=llm_provider_settings.model,
+        input=prompt,
+    )
+
+    print(f"Answer: {interaction.output_text}")
+    print("Retrieved sources:")
+    for source_index, source in enumerate(sources, start=1):
+        print(
+            f"[Source {source_index}] {source['title']} - {source['url']} "
+            f"(best distance: {source['distance']:.4f})"
+        )
