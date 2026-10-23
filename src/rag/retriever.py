@@ -4,6 +4,9 @@ import chromadb
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import truststore
+
+truststore.inject_into_ssl()
 
 # Load environment variables from .env file
 load_dotenv()
@@ -29,9 +32,13 @@ user_queries = [
     "What are the risks of investing in sector ETFs?",
     "How can savings help reduce financial risk?",
     "How can I diversify my investments?",
+    "How can I make a basic budget and track my cash flow?",
+    "What is the difference between stocks and bonds?",
+    "How can investment fees affect my returns over time?",
+    "What is return on investment (ROI), and how is it calculated?",
+    "What are common types of investments, such as REITs and commodities?",
     "What are the tax implications of investing in sector ETFs?",
     "How we can buy and sell ETFs? What are the steps to buy ETFs?",
-    "Who is Mayank Gaur?",
     "What is the main use of Python Programming language?",
 ]
 

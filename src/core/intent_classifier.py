@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from google import genai
 
 from .settings import Settings
-from .state import CoreState, Intent
+from .state import CoreState, Intent, RequestedIntent
 from .llm_provider import get_llm_client
 
 VALID_INTENTS = {
@@ -117,5 +117,15 @@ User request:
         raise IntentClassificationError(
             f"Gemini returned an unsupported intent label: {intent!r}"
         )
+
+    requested_intent = state.get("requested_intent")
+    if requested_intent in {"finance_qa", "portfolio", "market", "goals"}:
+        # Keep the global out-of-scope boundary even when a user is in a
+        # specialist tab. For a general discussion, retain clarification for
+        # genuinely ambiguous requests; specialist tabs provide useful context.
+        if intent == "out_of_scope":
+            return {"intent": "out_of_scope"}
+        if intent != "clarify" or requested_intent != "finance_qa":
+            return {"intent": cast(Intent, requested_intent)}
 
     return {"intent": cast(Intent, intent)}

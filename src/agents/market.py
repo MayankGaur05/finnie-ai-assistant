@@ -14,10 +14,11 @@ import truststore
 import yaml
 
 from src.core.state import CoreState
-
+from dotenv import load_dotenv
 
 # Use the OS trust store for HTTPS on managed office devices.
 truststore.inject_into_ssl()
+load_dotenv()
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 with (PROJECT_ROOT / "config.yaml").open(encoding="utf-8") as config_file:
@@ -231,10 +232,12 @@ def _get_quote(symbol: str, api_key: str) -> tuple[dict[str, object], str]:
         return cached[1], cached[2]
 
     payload = _api_get(
+        
         {"function": "GLOBAL_QUOTE", "symbol": symbol},
         api_key,
     )
     quote = payload.get("Global Quote")
+    print({key: value for key, value in payload.items() if key != "apikey"})
     if not isinstance(quote, dict) or not quote:
         raise MarketDataError(f"Alpha Vantage returned no quote for {symbol}.")
 

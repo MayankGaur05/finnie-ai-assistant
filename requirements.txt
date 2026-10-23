@@ -3,6 +3,8 @@ langgraph==1.2.14
 streamlit==1.65.0
 chromadb==1.5.9
 google-genai==2.29.0
+openpyxl==3.1.5
+defusedxml==0.7.1
 truststore==0.10.4
 pyyaml 
 python-dotenv

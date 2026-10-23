@@ -2,6 +2,7 @@ from typing import Literal, NotRequired, Required, TypedDict
 
 
 Intent = Literal["finance_qa", "portfolio", "market", "goals", "clarify", "out_of_scope"]
+RequestedIntent = Literal["finance_qa", "portfolio", "market", "goals"]
 
 
 class RetrievedChunk(TypedDict):
@@ -29,6 +30,7 @@ class CoreState(TypedDict, total=False):
 
     user_input: Required[str]
     intent: NotRequired[Intent]
+    requested_intent: NotRequired[RequestedIntent]
     entities: NotRequired[dict[str, object]]
     retrieved_context: NotRequired[list[RetrievedChunk]]
     sources: NotRequired[list[SourceCitation]]
@@ -36,3 +38,7 @@ class CoreState(TypedDict, total=False):
     needs_clarification: NotRequired[bool]
     response: NotRequired[str]
     error: NotRequired[str]
+    portfolio_attachment_name: NotRequired[str]
+    portfolio_attachment_text: NotRequired[str]
+    portfolio_image_data: NotRequired[str]
+    portfolio_image_mime_type: NotRequired[Literal["image/png", "image/jpeg"]]

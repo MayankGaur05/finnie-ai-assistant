@@ -51,5 +51,5 @@ if __name__ == "__main__":
     # print(chain.get_graph().draw_mermaid())
     # chain.get_graph().draw_ascii("workflow.txt")
     # chain.get_graph().draw_png("workflow.png")
-    res =chain.invoke({"user_input": "What is diversification?"})
+    res =chain.invoke({"user_input": "What is Nifty 50?"})
     print(res)

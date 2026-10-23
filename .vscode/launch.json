@@ -18,6 +18,15 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Finnie Streamlit",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "streamlit",
+            "args": ["run", "${workspaceFolder}/src/frontend/app.py"],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }
