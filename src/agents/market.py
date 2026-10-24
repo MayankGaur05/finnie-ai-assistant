@@ -33,9 +33,10 @@ DEFAULT_MARKET = str(APPLICATION_CONFIG.get("default_market", "NSE"))
 
 _TICKER_PATTERN = re.compile(r"(?<![A-Za-z0-9])[A-Z][A-Z0-9.-]{0,14}(?![A-Za-z0-9])")
 _NON_TICKER_WORDS = {
-    "ALPHA", "AV", "BSE", "BUY", "CLOSE", "CURRENT", "EXCHANGE", "FOR",
-    "HIGH", "INDEX", "LOW", "MARKET", "NSE", "OF", "OPEN", "PRICE",
-    "QUOTE", "SHARE", "STOCK", "THE", "TODAY", "TRADE", "VOLUME",
+    "ALPHA", "AV", "BSE", "BUY", "CLOSE", "CURRENT", "EXCHANGE", "LATEST", "AVAILABLE", "FOR",
+    "HIGH", "INDEX", "LOW", "MARKET", "NSE", "BSE", "NYSE", "OF", "OPEN", "PRICE", "RATE"
+    "QUOTE", "SHARE", "STOCK", "THE", "TODAY", "YESTERDAY", "TOMORROW", "WEEK", "YEAR",
+     "TRADE", "VOLUME",
 }
 _QUOTE_CACHE: dict[str, tuple[float, dict[str, object], str]] = {}
 
