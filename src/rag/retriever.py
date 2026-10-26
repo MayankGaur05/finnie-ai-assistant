@@ -26,20 +26,34 @@ DISTANCE_THRESHOLD = 1.00
 
 # Define a list of user queries to test the retrieval and response generation
 user_queries = [
-    "Can a portfolio of several sector ETFs still be concentrated?",
-    "Could several sector ETFs still leave me concentrated?",
-    "What are the mutual funds and how to buy them?",
-    "What are the risks of investing in sector ETFs?",
-    "How can savings help reduce financial risk?",
-    "How can I diversify my investments?",
-    "How can I make a basic budget and track my cash flow?",
-    "What is the difference between stocks and bonds?",
-    "How can investment fees affect my returns over time?",
-    "What is return on investment (ROI), and how is it calculated?",
-    "What are common types of investments, such as REITs and commodities?",
-    "What are the tax implications of investing in sector ETFs?",
-    "How we can buy and sell ETFs? What are the steps to buy ETFs?",
-    "What is the main use of Python Programming language?",
+     "What are the differences between checking and savings accounts?",
+     "What is the difference between direct and indirect taxes in India?",
+     "How do GST, customs duty, and excise duty fit into indirect taxation in India?",
+     "What kinds of income may be considered when calculating income tax in India?",
+     "Does every charitable donation qualify for a tax deduction in India?",
+     "What is the difference between a tax deduction, a tax credit, and an exemption?",
+     "What should I know about tax laws and the Income-tax Act 2025 in India?",
+     "What should I compare before choosing a savings scheme in India?",
+     "What costs and checks should I consider before buying a home in India?",
+     "How can I make a household budget and plan savings in India?",
+     "What does government policy mean, and which levels of government make policy in India?",
+     "What is monetary policy in India and what role does the RBI's MPC have?",
+     "What is fiscal policy and how do government spending and revenue affect the economy?",
+     "What is the difference between microeconomics and macroeconomics?",
+    # "Can a portfolio of several sector ETFs still be concentrated?",
+    # "Could several sector ETFs still leave me concentrated?",
+    # "What are the mutual funds and how to buy them?",
+    # "What are the risks of investing in sector ETFs?",
+    # "How can savings help reduce financial risk?",
+    # "How can I diversify my investments?",
+    # "How can I make a basic budget and track my cash flow?",
+    # "What is the difference between stocks and bonds?",
+    # "How can investment fees affect my returns over time?",
+    # "What is return on investment (ROI), and how is it calculated?",
+    # "What are common types of investments, such as REITs and commodities?",
+    # "What are the tax implications of investing in sector ETFs?",
+    # "How we can buy and sell ETFs? What are the steps to buy ETFs?",
+    # "What is the main use of Python Programming language?",
 ]
 
 # Set up the Gemini API client using the API key from environment variables
@@ -73,7 +87,7 @@ for idx, user_query in enumerate(user_queries, start=1):
     # the same article so each article appears as a single cited source.
     sources_by_url = {}
     for document, metadata, distance in zip(documents, metadatas, distances):
-        if distance > DISTANCE_THRESHOLD:
+        if distance >= DISTANCE_THRESHOLD:
             continue
 
         title = metadata.get("title", "Untitled source")

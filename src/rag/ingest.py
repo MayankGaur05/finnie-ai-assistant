@@ -224,8 +224,26 @@ def main() -> None:
         print(f"Indexed '{metadata['title']}' in {DB_DIRECTORY}")
    
     questions = [
-                 "Can a portfolio of several sector ETFs still be concentrated?", 
-                 "Could several sector ETFs still leave me concentrated?",    
+                 # Recent articles: banking, Indian tax, savings, housing, and economics.
+                 "What are the differences between checking and savings accounts?",
+                 "What is the difference between direct and indirect taxes in India?",
+                 "How do GST, customs duty, and excise duty fit into indirect taxation in India?",
+                 "What kinds of income may be considered when calculating income tax in India?",
+                 "Does every charitable donation qualify for a tax deduction in India?",
+                 "What is the difference between a tax deduction, a tax credit, and an exemption?",
+                 "What should I know about tax laws and the Income-tax Act 2025 in India?",
+                 "What should I compare before choosing a savings scheme in India?",
+                 "What costs and checks should I consider before buying a home in India?",
+                 "How can I make a household budget and plan savings in India?",
+                 "What does government policy mean, and which levels of government make policy in India?",
+                 "What is monetary policy in India and what role does the RBI's MPC have?",
+                 "What is fiscal policy and how do government spending and revenue affect the economy?",
+                 "What is the difference between microeconomics and macroeconomics?",
+                 "Explain income tax in India.",
+
+                 # Existing core retrieval and out-of-scope questions.
+                 "Can a portfolio of several sector ETFs still be concentrated?",
+                 "Could several sector ETFs still leave me concentrated?",
                  "What are the mutual funds and how to buy them?",
                  "What are the risks of investing in sector ETFs?",
                  "What is an emergency funds? Why we need it?",
