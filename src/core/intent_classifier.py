@@ -1,18 +1,15 @@
-import truststore 
+import truststore
 
 truststore.inject_into_ssl()
 import json
-import os
-from functools import lru_cache
 from pathlib import Path
 from typing import cast
 
 from dotenv import load_dotenv
-from google import genai
 
-from .settings import Settings
-from .state import CoreState, Intent, RequestedIntent
 from .llm_provider import get_llm_client
+from .settings import Settings
+from .state import CoreState, Intent
 
 VALID_INTENTS = {
     "finance_qa",

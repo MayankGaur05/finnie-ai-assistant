@@ -9,7 +9,6 @@ from src.core.llm_provider import get_llm_client
 from src.core.settings import Settings
 from src.core.state import CoreState, RetrievedChunk, SourceCitation
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 app_settings = Settings(PROJECT_ROOT / "config.yaml")

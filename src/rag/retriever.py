@@ -1,10 +1,12 @@
-﻿from google import genai
-from src.core import settings
-import chromadb
+﻿import os
 from pathlib import Path
-from dotenv import load_dotenv
-import os
+
+import chromadb
 import truststore
+from dotenv import load_dotenv
+from google import genai
+
+from src.core import settings
 
 truststore.inject_into_ssl()
 
@@ -111,7 +113,7 @@ for idx, user_query in enumerate(user_queries, start=1):
 
     print(f"Query {idx}: {user_query}")
     if not sources:
-        print(f"Answer: I couldn't find sufficiently relevant information in the knowledge base to answer that.")
+        print("Answer: I couldn't find sufficiently relevant information in the knowledge base to answer that.")
         print(f"No sources passed the distance cutoff ({DISTANCE_THRESHOLD:.2f}).")
         if nearest_candidate is not None:
             _, nearest_metadata, nearest_distance = nearest_candidate

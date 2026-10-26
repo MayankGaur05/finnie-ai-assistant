@@ -1,12 +1,14 @@
 import os
-import truststore
 from functools import lru_cache
+
+import truststore
 
 truststore.inject_into_ssl()
 from dotenv import load_dotenv
 
 load_dotenv()
 from google import genai
+
 
 @lru_cache(maxsize=1)
 def get_llm_client():

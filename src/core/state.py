@@ -1,6 +1,5 @@
 from typing import Literal, NotRequired, Required, TypedDict
 
-
 Intent = Literal["finance_qa", "portfolio", "market", "goals", "clarify", "out_of_scope"]
 RequestedIntent = Literal["finance_qa", "portfolio", "market", "goals"]
 

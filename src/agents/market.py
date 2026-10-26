@@ -4,7 +4,7 @@ import json
 import os
 import re
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.error import URLError
 from urllib.parse import urlencode
@@ -12,9 +12,9 @@ from urllib.request import Request, urlopen
 
 import truststore
 import yaml
+from dotenv import load_dotenv
 
 from src.core.state import CoreState
-from dotenv import load_dotenv
 
 # Use the OS trust store for HTTPS on managed office devices.
 truststore.inject_into_ssl()
@@ -34,7 +34,7 @@ DEFAULT_MARKET = str(APPLICATION_CONFIG.get("default_market", "NSE"))
 _TICKER_PATTERN = re.compile(r"(?<![A-Za-z0-9])[A-Z][A-Z0-9.-]{0,14}(?![A-Za-z0-9])")
 _NON_TICKER_WORDS = {
     "ALPHA", "AV", "BSE", "BUY", "CLOSE", "CURRENT", "EXCHANGE", "LATEST", "AVAILABLE", "FOR",
-    "HIGH", "INDEX", "LOW", "MARKET", "NSE", "BSE", "NYSE", "OF", "OPEN", "PRICE", "RATE"
+    "HIGH", "INDEX", "LOW", "MARKET", "NSE", "NYSE", "OF", "OPEN", "PRICE", "RATE",
     "QUOTE", "SHARE", "STOCK", "THE", "TODAY", "YESTERDAY", "TOMORROW", "WEEK", "YEAR",
      "TRADE", "VOLUME",
 }
@@ -151,14 +151,14 @@ def _asks_for_historical_data(user_input: str) -> bool:
             r"\b(history|historical|performance|past\s+(week|month|year)|"
             r"last\s+(week|month|year)|52[ -]?week)\b",
             user_input,
-            re.I,
+            re.IGNORECASE,
         )
     )
 
 
 def _asks_for_index(user_input: str) -> bool:
     return bool(
-        re.search(r"\b(NIFTY|SENSEX|S&P\s*500|DOW JONES|NASDAQ|index)\b", user_input, re.I)
+        re.search(r"\b(NIFTY|SENSEX|S&P\s*500|DOW JONES|NASDAQ|index)\b", user_input, re.IGNORECASE)
     )
 
 
@@ -242,7 +242,7 @@ def _get_quote(symbol: str, api_key: str) -> tuple[dict[str, object], str]:
     if not isinstance(quote, dict) or not quote:
         raise MarketDataError(f"Alpha Vantage returned no quote for {symbol}.")
 
-    retrieved_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    retrieved_at = datetime.now(UTC).isoformat(timespec="seconds")
     _QUOTE_CACHE[symbol] = (now, quote, retrieved_at)
     return quote, retrieved_at
 

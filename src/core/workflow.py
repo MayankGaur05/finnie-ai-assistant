@@ -12,7 +12,6 @@ from src.core.intent_classifier import classify_intent
 from src.core.router import route_intent
 from src.core.state import CoreState
 
-
 workflow = StateGraph(CoreState)
 
 workflow.add_node("classify_intent", classify_intent)
