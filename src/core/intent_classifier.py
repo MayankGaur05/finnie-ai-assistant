@@ -16,6 +16,7 @@ VALID_INTENTS = {
     "portfolio",
     "market",
     "goals",
+    "news",
     "clarify",
     "out_of_scope",
 }
@@ -58,6 +59,10 @@ required by the response schema.
   intent is still market; the market workflow can ask for the ticker.
 - goals: General saving, budgeting, or financial-goal planning. Examples:
   "Help me plan savings for tuition next year" and "How can I budget my income?"
+- news: A request to find or summarize recent financial, company, market, banking,
+  tax-policy, or economic news using current articles. Examples: "Summarize this
+  week's RBI policy news" and "What is the latest news about TCS?" Do not use
+  news for timeless educational explanations; those are finance_qa.
 - clarify: The user's intended task is genuinely ambiguous. Missing details for
   an otherwise clear task do not change its intent. For example, "Can you help
   me with my portfolio?" is portfolio; the portfolio workflow can ask for
@@ -116,7 +121,7 @@ User request:
         )
 
     requested_intent = state.get("requested_intent")
-    if requested_intent in {"finance_qa", "portfolio", "market", "goals"}:
+    if requested_intent in {"finance_qa", "portfolio", "market", "goals", "news"}:
         # Keep the global out-of-scope boundary even when a user is in a
         # specialist tab. For a general discussion, retain clarification for
         # genuinely ambiguous requests; specialist tabs provide useful context.

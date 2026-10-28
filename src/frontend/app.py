@@ -53,6 +53,17 @@ TAB_CONFIG: list[dict[str, str]] = [
         "examples": "Example: What is the latest available price for TCS?",
     },
     {
+        "label": "News Synthesis",
+        "key": "news",
+        "intent": "news",
+        "description": (
+            "Search recent financial news and ask Finnie to synthesize the returned "
+            "article summaries. Finnie shows article links, publishers, and publication dates."
+        ),
+        "placeholder": "Ask about recent financial or economic news...",
+        "examples": "Example: Summarize recent RBI monetary policy news.",
+    },
+    {
         "label": "Goal Planning",
         "key": "goals",
         "intent": "goals",
@@ -187,6 +198,13 @@ def _render_sources(sources: Any) -> None:
                 st.link_button(title, url, use_container_width=True)
             else:
                 st.markdown(f"**{title}**")
+            publisher = source.get("publisher")
+            published_at = source.get("published_at")
+            if publisher or published_at:
+                details = " · ".join(
+                    str(value) for value in (publisher, published_at) if value
+                )
+                st.caption(details)
             if isinstance(distance, (int, float)):
                 st.caption(f"Retrieval distance: {distance:.3f}")
 
@@ -365,7 +383,8 @@ def main() -> None:
     st.subheader("Your AI personal finance learning assistant")
     st.write(
         "Explore general finance concepts, describe a portfolio, look up a supported "
-        "stock quote, or think through a savings goal in a conversational interface."
+        "stock quote, synthesize recent financial news, or think through a savings "
+        "goal in a conversational interface."
     )
     st.warning(EDUCATION_NOTICE, icon="⚠️")
     st.caption(

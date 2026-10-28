@@ -25,6 +25,13 @@ market_data:
   cache_ttl_minutes: 15
   request_timeout_seconds: 10
 
+news_data:
+  provider: marketaux
+  api_url: https://api.marketaux.com/v1/news/all
+  lookback_days: 7
+  max_articles: 3 # Marketaux free tier returns up to three articles per request
+  request_timeout_seconds: 15
+
 safety:
   education_only: true
   show_citations: true

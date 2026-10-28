@@ -14,6 +14,7 @@ def route_intent(state: CoreState) -> Intent:
         "portfolio",
         "market",
         "goals",
+        "news",
         "clarify",
         "out_of_scope",
     }:

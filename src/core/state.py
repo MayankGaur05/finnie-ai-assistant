@@ -1,7 +1,15 @@
 from typing import Literal, NotRequired, Required, TypedDict
 
-Intent = Literal["finance_qa", "portfolio", "market", "goals", "clarify", "out_of_scope"]
-RequestedIntent = Literal["finance_qa", "portfolio", "market", "goals"]
+Intent = Literal[
+    "finance_qa",
+    "portfolio",
+    "market",
+    "goals",
+    "news",
+    "clarify",
+    "out_of_scope",
+]
+RequestedIntent = Literal["finance_qa", "portfolio", "market", "goals", "news"]
 
 
 class RetrievedChunk(TypedDict):
@@ -20,6 +28,15 @@ class SourceCitation(TypedDict):
     distance: float
 
 
+class NewsCitation(TypedDict):
+    """Publisher attribution and publication time for a retrieved news article."""
+
+    title: str
+    url: str
+    publisher: str
+    published_at: str
+
+
 class CoreState(TypedDict, total=False):
     """Shared state passed between Finnie's LangGraph workflow nodes.
 
@@ -32,7 +49,7 @@ class CoreState(TypedDict, total=False):
     requested_intent: NotRequired[RequestedIntent]
     entities: NotRequired[dict[str, object]]
     retrieved_context: NotRequired[list[RetrievedChunk]]
-    sources: NotRequired[list[SourceCitation]]
+    sources: NotRequired[list[SourceCitation | NewsCitation]]
     tool_result: NotRequired[dict[str, object]]
     needs_clarification: NotRequired[bool]
     response: NotRequired[str]

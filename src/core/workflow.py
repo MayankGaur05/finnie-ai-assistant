@@ -6,6 +6,7 @@ from src.agents.clarify import clarify
 from src.agents.finance_qa import finance_qa
 from src.agents.goals import goals
 from src.agents.market import market
+from src.agents.news_synthesizer import news_synthesizer
 from src.agents.out_of_scope import out_of_scope
 from src.agents.portfolio import portfolio
 from src.core.intent_classifier import classify_intent
@@ -18,6 +19,7 @@ workflow.add_node("classify_intent", classify_intent)
 workflow.add_node("finance_qa", finance_qa)
 workflow.add_node("portfolio", portfolio)
 workflow.add_node("market", market)
+workflow.add_node("news", news_synthesizer)
 workflow.add_node("goals", goals)
 workflow.add_node("clarify", clarify)
 workflow.add_node("out_of_scope", out_of_scope)
@@ -30,6 +32,7 @@ workflow.add_conditional_edges(
         "finance_qa": "finance_qa",
         "portfolio": "portfolio",
         "market": "market",
+        "news": "news",
         "goals": "goals",
         "clarify": "clarify",
         "out_of_scope": "out_of_scope",
@@ -39,6 +42,7 @@ workflow.add_conditional_edges(
 workflow.add_edge("finance_qa", END)
 workflow.add_edge("portfolio", END)
 workflow.add_edge("market", END)
+workflow.add_edge("news", END)
 workflow.add_edge("goals", END)
 workflow.add_edge("clarify", END)
 workflow.add_edge("out_of_scope", END)
